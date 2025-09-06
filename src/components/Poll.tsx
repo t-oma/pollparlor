@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { shuffle } from "@/utils/array";
-import { PollItem, PollItemPair } from "@/types/poll";
+import { usePollStore } from "@/providers/poll-store-provider";
+import { PollItem } from "@/types/poll";
+import clsx from "clsx";
 
 const items: PollItem[] = [
     {
@@ -19,93 +20,83 @@ const items: PollItem[] = [
     },
 ];
 
-function drawPair(queue: PollItem[]): { pair: PollItemPair; rest: PollItem[] } {
-    if (queue.length >= 2) {
-        const [left, right, ...rest] = queue;
-        return { pair: { left, right }, rest };
-    }
-    return { pair: { left: null, right: null }, rest: queue.slice() };
-}
-
-function getRandomPollItem(items: PollItem[]): PollItem {
-    return shuffle(items)[0];
-}
-
 export default function Poll() {
-    const [pollItems, setPollItems] = useState<PollItem[]>(items);
-    const [winners, setWinners] = useState<PollItem[]>([]);
-    const [activePair, setActivePair] = useState<PollItemPair | null>(null);
+    const { queue, winners, active, champion, start, pick } = usePollStore(
+        (store) => store
+    );
+    const [animating, setAnimating] = useState(false);
+    const [selected, setSelected] = useState<"left" | "right" | null>(null);
 
-    function pullItem(): PollItem {
-        const item = getRandomPollItem(pollItems);
-        setPollItems((prev) => prev.filter((i) => i !== item));
-        return item;
-    }
+    useEffect(() => {
+        start(items);
+    }, [start]);
 
-    function onSelect(item: PollItem | null) {
+    const onSelect = (side: "left" | "right") => {
+        if (animating) return;
+        const item = side === "left" ? active.left : active.right;
         if (!item) return;
 
-        setWinners((prevWinners) => {
-            const newWinners = [...prevWinners, item];
+        setSelected(side);
+        setAnimating(true);
 
-            setPollItems((prevItems) => {
-                const remaining = prevItems.filter((i) => i !== item);
-
-                if (remaining.length >= 2) {
-                    setActivePair({
-                        left: getRandomPollItem(remaining),
-                        right: getRandomPollItem(
-                            remaining.filter((x) => x !== remaining[0])
-                        ),
-                    });
-                    return remaining;
-                }
-
-                if (prevWinners.length + 1 >= 2) {
-                    const restored = newWinners;
-                    const newPair = {
-                        left: getRandomPollItem(restored),
-                        right: getRandomPollItem(
-                            restored.filter((x) => x !== restored[0])
-                        ),
-                    };
-                    setActivePair(newPair);
-                    return restored;
-                }
-
-                return remaining;
-            });
-
-            return newWinners;
-        });
-    }
-
-    useEffect(() => {
-        const left = pullItem();
-        const right = pullItem();
-
-        setActivePair({ left, right });
-    }, []);
-
-    useEffect(() => {
-        console.log("winners:", winners);
-    }, [winners]);
-
-    useEffect(() => {
-        console.log("items:", pollItems);
-    }, [pollItems]);
+        setTimeout(() => {
+            pick(item);
+            setAnimating(false);
+            setSelected(null);
+        }, 650);
+    };
 
     return (
         <div className="flex w-full flex-1 flex-col lg:flex-row">
-            <PollItem
-                onSelect={() => onSelect(activePair?.left ?? null)}
-                item={activePair?.left ?? null}
-            />
-            <div className="h-1 w-full lg:h-auto lg:w-1 dark:bg-zinc-500"></div>
-            <PollItem
-                onSelect={() => onSelect(activePair?.right ?? null)}
-                item={activePair?.right ?? null}
-            />
+            {champion === null ? (
+                <>
+                    <div
+                        className={clsx(
+                            "flex border transition-all duration-500 dark:border-zinc-500",
+                            selected === "left" && "flex-1",
+                            selected === "right" && "flex-[0] overflow-hidden",
+                            !selected && "flex-1/2"
+                        )}
+                    >
+                        <button
+                            type="button"
+                            className="flex-1 cursor-pointer p-4 transition-colors disabled:cursor-default dark:bg-zinc-900 dark:hover:bg-zinc-800"
+                            disabled={animating}
+                            onClick={() => onSelect("left")}
+                        >
+                            <span className="text-3xl">
+                                {active.left ? active.left.title : "-"}
+                            </span>
+                        </button>
+                    </div>
+                    <div className="h-1 w-full lg:h-auto lg:w-1 dark:bg-zinc-500"></div>
+                    <div
+                        className={clsx(
+                            "flex border transition-all duration-500 dark:border-zinc-500",
+                            selected === "right" && "flex-1",
+                            selected === "left" && "flex-[0] overflow-hidden",
+                            !selected && "flex-1/2"
+                        )}
+                    >
+                        <button
+                            type="button"
+                            className="flex-1 cursor-pointer p-4 transition-colors disabled:cursor-default dark:bg-zinc-900 dark:hover:bg-zinc-800"
+                            disabled={animating}
+                            onClick={() => onSelect("right")}
+                        >
+                            <span className="text-3xl">
+                                {active.right ? active.right.title : "-"}
+                            </span>
+                        </button>
+                    </div>
+                </>
+            ) : (
+                <div className="flex flex-1 items-center justify-center">
+                    <p className="text-center text-4xl font-bold">
+                        champion: {champion.title}
+                    </p>
+                </div>
+            )}
         </div>
     );
 }
