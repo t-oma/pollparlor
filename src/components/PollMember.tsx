@@ -1,6 +1,6 @@
 import type { PollItem } from "@/types/poll";
 
-export default function PollItem({
+export default function PollMember({
     onSelect,
     item,
 }: Readonly<{
@@ -14,7 +14,7 @@ export default function PollItem({
                 className="flex-1 cursor-pointer p-4 transition-colors dark:bg-zinc-900 dark:hover:bg-zinc-800"
                 onClick={onSelect}
             >
-                {item ? item.title : "-"}
+                <span className="text-3xl">{item ? item.title : "-"}</span>
             </button>
         </div>
     );
