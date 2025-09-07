@@ -9,7 +9,11 @@
 
 @theme inline {
     --color-background: var(--background);
+    --color-background-accent: var(--background-accent);
     --color-foreground: var(--foreground);
+    --color-foreground-accent: var(--foreground-accent);
+    --color-border: var(--border);
+
     --font-sans: var(--font-geist-sans);
     --font-mono: var(--font-geist-mono);
 }
@@ -17,7 +21,10 @@
 @media (prefers-color-scheme: dark) {
     :root {
         --background: oklch(20% 0 0);
+        --background-accent: oklch(25% 0 0);
         --foreground: oklch(97% 0 0);
+        --foreground-accent: oklch(92% 0 0);
+        --border: oklch(44.2% 0.017 285.786);
     }
 }
 
