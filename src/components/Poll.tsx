@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePollStore } from "@/providers/poll-store-provider";
 import { PollItem } from "@/types/poll";
 import clsx from "clsx";
+import Button from "./Button";
 
 const items: PollItem[] = [
     {
@@ -52,42 +53,40 @@ export default function Poll() {
                 <>
                     <div
                         className={clsx(
-                            "flex border transition-all duration-500 dark:border-zinc-500",
+                            "flex transition-all duration-500",
                             selected === "left" && "flex-1",
                             selected === "right" && "flex-[0] overflow-hidden",
                             !selected && "flex-1/2"
                         )}
                     >
-                        <button
-                            type="button"
-                            className="flex-1 cursor-pointer p-4 transition-colors disabled:cursor-default dark:bg-zinc-900 dark:hover:bg-zinc-800"
+                        <Button
                             disabled={animating}
                             onClick={() => onSelect("left")}
+                            className="flex-1"
                         >
                             <span className="text-3xl">
                                 {active.left ? active.left.title : "-"}
                             </span>
-                        </button>
+                        </Button>
                     </div>
-                    <div className="h-1 w-full lg:h-auto lg:w-1 dark:bg-zinc-500"></div>
+                    <div className="bg-border h-1 w-full rounded-md lg:h-auto lg:w-1"></div>
                     <div
                         className={clsx(
-                            "flex border transition-all duration-500 dark:border-zinc-500",
+                            "flex transition-all duration-500",
                             selected === "right" && "flex-1",
                             selected === "left" && "flex-[0] overflow-hidden",
                             !selected && "flex-1/2"
                         )}
                     >
-                        <button
-                            type="button"
-                            className="flex-1 cursor-pointer p-4 transition-colors disabled:cursor-default dark:bg-zinc-900 dark:hover:bg-zinc-800"
+                        <Button
                             disabled={animating}
                             onClick={() => onSelect("right")}
+                            className="flex-1"
                         >
                             <span className="text-3xl">
                                 {active.right ? active.right.title : "-"}
                             </span>
-                        </button>
+                        </Button>
                     </div>
                 </>
             ) : (
