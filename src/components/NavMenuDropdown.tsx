@@ -15,6 +15,7 @@ import {
     useInteractions,
     useRole,
 } from "@floating-ui/react";
+import NavLinksList from "./NavLinksList";
 
 export default function NavMenuDropdown({ className }: { className?: string }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -58,21 +59,7 @@ export default function NavMenuDropdown({ className }: { className?: string }) {
                         {...getFloatingProps()}
                         className="z-50 shadow-lg"
                     >
-                        <ul className="bg-background-accent border-border flex flex-col gap-1 rounded-lg border p-1">
-                            {["Home", "Polls", "Settings"].map((item) => (
-                                <li
-                                    key={item}
-                                    className="rounded-md dark:hover:bg-zinc-800"
-                                >
-                                    <a
-                                        href={"#/" + item}
-                                        className="text-foreground block p-2 px-4"
-                                    >
-                                        {item}
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
+                        <NavLinksList />
                     </nav>
                 </FloatingFocusManager>
             )}
