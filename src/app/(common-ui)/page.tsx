@@ -1,4 +1,5 @@
-import Poll from "@/components/Poll";
+import { BookCopy } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
     return (
@@ -11,7 +12,17 @@ export default function Home() {
                     </h2>
                 </div>
 
-                <Poll />
+                {/* <Poll /> */}
+
+                <div className="flex flex-1 flex-col items-center justify-center">
+                    <Link
+                        href="/polls"
+                        className="inline-flex items-center gap-4 rounded-md p-2 underline-offset-3 hover:underline"
+                    >
+                        <BookCopy className="h-5 w-5" />
+                        <span className="text-xl">See polls page</span>
+                    </Link>
+                </div>
             </section>
         </main>
     );
