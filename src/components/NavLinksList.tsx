@@ -14,7 +14,7 @@ export default function NavLinksList() {
                     className=""
                 >
                     <Link
-                        href={"#" + item.href}
+                        href={item.href}
                         className="text-foreground inline-flex w-full items-center gap-3 rounded-md p-2 px-4 dark:hover:bg-zinc-800"
                     >
                         {item.icon}
