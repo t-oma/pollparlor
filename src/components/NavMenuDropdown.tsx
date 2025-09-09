@@ -23,7 +23,7 @@ export default function NavMenuDropdown({ className }: { className?: string }) {
     const { refs, floatingStyles, context } = useFloating({
         open: isOpen,
         onOpenChange: setIsOpen,
-        middleware: [offset({ mainAxis: 10, crossAxis: 28 }), flip(), shift()],
+        middleware: [offset({ mainAxis: 10, crossAxis: 48 }), flip(), shift()],
         whileElementsMounted: autoUpdate,
     });
 
@@ -46,7 +46,11 @@ export default function NavMenuDropdown({ className }: { className?: string }) {
                 className={className}
             >
                 <span className="sr-only">Menu</span>
-                {isOpen ? <X /> : <Menu />}
+                {isOpen ? (
+                    <X className="h-5 w-5" />
+                ) : (
+                    <Menu className="h-5 w-5" />
+                )}
             </Button>
             {isOpen && (
                 <FloatingFocusManager
