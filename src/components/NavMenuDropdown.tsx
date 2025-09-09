@@ -63,7 +63,7 @@ export default function NavMenuDropdown({ className }: { className?: string }) {
                         {...getFloatingProps()}
                         className="z-50 shadow-lg"
                     >
-                        <NavLinksList />
+                        <NavLinksList onClose={() => setIsOpen(false)} />
                     </nav>
                 </FloatingFocusManager>
             )}
