@@ -27,7 +27,6 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
                 user: {
                     id: crypto.randomUUID(),
                     email,
-                    password,
                     createdAt: new Date(),
                     passwordChangedAt: new Date(),
                     verification: {
@@ -43,7 +42,6 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
                 user: {
                     id: crypto.randomUUID(),
                     email,
-                    password,
                     createdAt: new Date(),
                     passwordChangedAt: new Date(),
                     verification: {
