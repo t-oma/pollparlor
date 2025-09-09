@@ -20,16 +20,16 @@ export type LinksStore = LinksState & LinksActions;
 
 const defaultInitState: LinksState = {
     links: [
-        { href: "/", label: "Home", icon: <House className="h-5 w-5" /> },
+        { href: "/", label: "Home", icon: <House className="h-4 w-4" /> },
         {
             href: "/polls",
             label: "Polls",
-            icon: <BookCopy className="h-5 w-5" />,
+            icon: <BookCopy className="h-4 w-4" />,
         },
         {
             href: "/settings",
             label: "Settings",
-            icon: <Settings className="h-5 w-5" />,
+            icon: <Settings className="h-4 w-4" />,
         },
     ],
 };
