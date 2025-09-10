@@ -19,6 +19,12 @@ const items: PollItem[] = [
     {
         title: "Go",
     },
+    {
+        title: "C#",
+    },
+    {
+        title: "Swift",
+    },
 ];
 
 export default function Poll() {

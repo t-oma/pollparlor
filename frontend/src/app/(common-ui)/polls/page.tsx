@@ -1,8 +1,8 @@
 "use client";
 
 import PollCard from "@/components/PollCard";
-import { Poll, PollItem } from "@/types/poll";
-import { useRef, useState } from "react";
+import { Poll } from "@/types/poll";
+import { useRef } from "react";
 
 const initPolls: Poll[] = [
     {
