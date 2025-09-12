@@ -110,6 +110,8 @@ func (s *Server) initRoutes() {
 			"error": "poll not found",
 		})
 	})
+	s.router.POST("/polls", func(c *gin.Context) {
+	})
 }
 
 // Run runs the server
