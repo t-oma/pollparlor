@@ -13,6 +13,6 @@ export type Poll = {
     title: string;
     uuid: string;
     author: User;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
 };

@@ -1,8 +1,8 @@
 export type User = {
     id: string;
     email: string;
-    createdAt: Date;
-    passwordChangedAt: Date;
+    createdAt: string;
+    passwordChangedAt: string;
     verification: {
         valid: boolean;
     };
