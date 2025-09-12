@@ -2,12 +2,13 @@
 
 import { useLinksStore } from "@/stores/links-store";
 import Link from "next/link";
+import { memo } from "react";
 
 type NavLinksListProps = {
-    onClose: () => void;
+    onClose?: () => void;
 };
 
-export default function NavLinksList({ onClose }: NavLinksListProps) {
+function NavLinksList({ onClose }: Readonly<NavLinksListProps>) {
     const links = useLinksStore((state) => state.links);
 
     return (
@@ -30,3 +31,5 @@ export default function NavLinksList({ onClose }: NavLinksListProps) {
         </ul>
     );
 }
+
+export default memo(NavLinksList);
