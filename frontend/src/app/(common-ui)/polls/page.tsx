@@ -1,6 +1,5 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import PollCard from "@/components/PollCard";
-import PollsGrid from "@/components/PollsGrid";
+import PollsGrid from "@/components/Poll/PollsGrid";
 import { Poll } from "@/types/poll";
 import { dateIsoToLocalString } from "@/utils/date";
 

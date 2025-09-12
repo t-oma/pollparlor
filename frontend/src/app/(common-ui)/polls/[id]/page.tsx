@@ -1,5 +1,5 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import PollDetails from "@/components/PollDetails";
+import PollDetails from "@/components/Poll/PollDetails";
 import { Poll } from "@/types/poll";
 import { dateIsoToLocalString } from "@/utils/date";
 

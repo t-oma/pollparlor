@@ -1,8 +1,8 @@
 "use client";
 
 import { useUserStore } from "@/providers/user-store-provider";
-import Button from "./Button";
 import { LogIn, User } from "lucide-react";
+import Button from "../Button";
 
 export default function UserAccount() {
     const { user, login, logout, register } = useUserStore((store) => store);

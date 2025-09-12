@@ -1,7 +1,6 @@
 "use client";
 
 import { Menu, X } from "lucide-react";
-import Button from "./Button";
 import { useState } from "react";
 import {
     autoUpdate,
@@ -16,6 +15,7 @@ import {
     useRole,
 } from "@floating-ui/react";
 import NavLinksList from "./NavLinksList";
+import Button from "@/components/Button";
 
 export default function NavMenuDropdown({ className }: { className?: string }) {
     const [isOpen, setIsOpen] = useState(false);
