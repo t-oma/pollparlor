@@ -4,7 +4,7 @@ import { Poll } from "@/types/poll";
 import { dateIsoToLocalString } from "@/utils/date";
 
 async function fetchPolls(): Promise<Poll[]> {
-    const res = await fetch(`http://localhost:8080/polls`, {
+    const res = await fetch(`http://localhost:8080/api/v1/polls`, {
         // cache control: cache for 60s; or use { cache: "no-store" }  to disable caching
         next: { revalidate: 60 },
     });
@@ -41,7 +41,7 @@ export default async function Polls() {
                 <div className="grid grid-cols-2 gap-3">
                     {polls.map((poll) => (
                         <PollCard
-                            key={poll.uuid}
+                            key={poll.id}
                             poll={poll}
                         />
                     ))}

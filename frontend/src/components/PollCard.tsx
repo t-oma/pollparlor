@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function PollCard({ poll }: { poll: Poll }) {
     return (
         <Link
-            href={`/polls/${poll.uuid}`}
+            href={`/polls/${poll.id}`}
             className="border-border flex flex-col gap-2 rounded-md border transition-all hover:scale-105 hover:rotate-2"
         >
             <div className="flex flex-col px-2 pt-2">

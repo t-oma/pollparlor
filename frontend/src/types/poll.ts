@@ -11,7 +11,7 @@ export type PollItemPair = {
 
 export type Poll = {
     title: string;
-    uuid: string;
+    id: string;
     author: User;
     createdAt: string;
     updatedAt: string;

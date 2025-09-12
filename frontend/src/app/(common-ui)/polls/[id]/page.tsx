@@ -3,13 +3,10 @@ import PollDetails from "@/components/PollDetails";
 import { Poll } from "@/types/poll";
 import { dateIsoToLocalString } from "@/utils/date";
 
-async function fetchPoll(uuid: string): Promise<Poll | null> {
-    const res = await fetch(
-        `${process.env.API_URL ?? "http://localhost:8080"}/polls/${uuid}`,
-        {
-            next: { revalidate: 60 },
-        }
-    );
+async function fetchPoll(id: string): Promise<Poll | null> {
+    const res = await fetch(`http://localhost:8080/api/v1/polls/${id}`, {
+        next: { revalidate: 60 },
+    });
     if (!res.ok) return null;
     const raw = await res.json();
     return {
@@ -22,10 +19,10 @@ async function fetchPoll(uuid: string): Promise<Poll | null> {
 export default async function PollPage({
     params,
 }: {
-    params: Promise<{ uuid: string }>;
+    params: Promise<{ id: string }>;
 }) {
-    const { uuid } = await params;
-    const poll = await fetchPoll(uuid);
+    const { id } = await params;
+    const poll = await fetchPoll(id);
     if (!poll) return <div>Poll not found</div>;
 
     return (
