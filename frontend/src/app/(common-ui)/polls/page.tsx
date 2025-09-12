@@ -1,31 +1,6 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import PollsGrid from "@/components/Poll/PollsGrid";
-import { Poll } from "@/types/poll";
-import { dateIsoToLocalString } from "@/utils/date";
-
-async function fetchPolls(): Promise<Poll[]> {
-    const res = await fetch(`http://localhost:8080/api/v1/polls`, {
-        // cache control: cache for 60s; or use { cache: "no-store" }  to disable caching
-        next: { revalidate: 60 },
-    });
-
-    if (!res.ok) {
-        console.error("Failed to fetch polls", res.status);
-        return [];
-    }
-
-    const data = (await res.json()) as Poll[];
-    return data.map((r) => ({
-        ...r,
-        createdAt: dateIsoToLocalString(r.createdAt),
-        updatedAt: dateIsoToLocalString(r.updatedAt),
-        author: {
-            ...r.author,
-            createdAt: dateIsoToLocalString(r.author.createdAt),
-            passwordChangedAt: dateIsoToLocalString(r.author.passwordChangedAt),
-        },
-    }));
-}
+import { fetchPolls } from "@/lib/api/polls";
 
 export default async function Polls() {
     const polls = await fetchPolls();
