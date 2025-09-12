@@ -1,5 +1,6 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import PollCard from "@/components/PollCard";
+import PollsGrid from "@/components/PollsGrid";
 import { Poll } from "@/types/poll";
 import { dateIsoToLocalString } from "@/utils/date";
 
@@ -38,14 +39,7 @@ export default async function Polls() {
                 <h2 className="text-lg font-medium">Available polls</h2>
                 <hr className="border-border w-full" />
 
-                <div className="grid grid-cols-2 gap-3">
-                    {polls.map((poll) => (
-                        <PollCard
-                            key={poll.id}
-                            poll={poll}
-                        />
-                    ))}
-                </div>
+                <PollsGrid polls={polls} />
             </section>
         </main>
     );
