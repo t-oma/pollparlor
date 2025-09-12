@@ -2,6 +2,7 @@
 
 import { Poll } from "@/types/poll";
 import Button from "../Button";
+import { formatRelativeDate } from "@/utils/date";
 
 export default function PollCard({
     poll,
@@ -10,6 +11,9 @@ export default function PollCard({
     poll: Poll;
     onClick: () => void;
 }>) {
+    const isUpdated =
+        new Date(poll.updatedAt).getTime() > new Date(poll.createdAt).getTime();
+
     return (
         <Button
             onClick={onClick}
@@ -20,14 +24,16 @@ export default function PollCard({
                     {poll.title}
                 </h3>
             </div>
+
             <hr className="border-border my-2 w-full" />
             <p className="text-sm">By: {poll.author.email}</p>
             <hr className="border-border my-2 w-full" />
-            {new Date(poll.createdAt) >= new Date(poll.updatedAt) ? (
-                <p className="text-sm">{poll.createdAt.toString()}</p>
-            ) : (
-                <p className="text-sm">u: {poll.updatedAt.toString()}</p>
-            )}
+
+            <p className="text-sm">
+                {isUpdated
+                    ? `upd: ${formatRelativeDate(poll.updatedAt)}`
+                    : formatRelativeDate(poll.createdAt)}
+            </p>
         </Button>
     );
 }
