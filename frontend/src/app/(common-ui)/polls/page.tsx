@@ -1,50 +1,45 @@
-"use client";
-
+import Breadcrumbs from "@/components/Breadcrumbs";
 import PollCard from "@/components/PollCard";
 import { Poll } from "@/types/poll";
-import { useRef } from "react";
+import { dateIsoToLocalString } from "@/utils/date";
 
-const initPolls: Poll[] = [
-    {
-        title: "Programming languages",
-        uuid: "9e3d57d6-4005-4b14-81b9-6034f6740f43",
-        author: {
-            id: "2",
-            email: "tets@tets.com",
-            createdAt: new Date(),
-            passwordChangedAt: new Date(),
-            verification: { valid: true },
-        },
-        createdAt: "09/09/2025, 12:20:33" as unknown as Date,
-        updatedAt: "09/09/2025, 15:20:33" as unknown as Date,
-    },
-    {
-        title: "Web frameworks",
-        uuid: "423ba1b8-e5bd-4193-8215-83329fcf1427",
-        author: {
-            id: "1",
-            email: "test@test.com",
-            createdAt: new Date(),
-            passwordChangedAt: new Date(),
-            verification: { valid: true },
-        },
-        createdAt: "09/09/2025, 12:20:33" as unknown as Date,
-        updatedAt: "09/09/2025, 12:20:33" as unknown as Date,
-    },
-];
+async function fetchPolls(): Promise<Poll[]> {
+    const res = await fetch(`http://localhost:8080/polls`, {
+        // cache control: cache for 60s; or use { cache: "no-store" }  to disable caching
+        next: { revalidate: 60 },
+    });
 
-export default function Polls() {
-    const polls = useRef<Poll[]>(initPolls);
+    if (!res.ok) {
+        console.error("Failed to fetch polls", res.status);
+        return [];
+    }
+
+    const data = (await res.json()) as Poll[];
+    return data.map((r) => ({
+        ...r,
+        createdAt: dateIsoToLocalString(r.createdAt),
+        updatedAt: dateIsoToLocalString(r.updatedAt),
+        author: {
+            ...r.author,
+            createdAt: dateIsoToLocalString(r.author.createdAt),
+            passwordChangedAt: dateIsoToLocalString(r.author.passwordChangedAt),
+        },
+    }));
+}
+
+export default async function Polls() {
+    const polls = await fetchPolls();
 
     return (
-        <main className="flex flex-1">
+        <main className="flex flex-1 flex-col">
+            <Breadcrumbs />
             <section className="flex flex-1 flex-col items-center space-y-4 p-2">
                 <hr className="border-border w-full" />
                 <h2 className="text-lg font-medium">Available polls</h2>
                 <hr className="border-border w-full" />
 
                 <div className="grid grid-cols-2 gap-3">
-                    {polls.current.map((poll) => (
+                    {polls.map((poll) => (
                         <PollCard
                             key={poll.uuid}
                             poll={poll}
