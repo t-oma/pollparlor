@@ -10,9 +10,7 @@ export default function Divider({
     orientation = "horizontal",
 }: Readonly<DividerProps>) {
     if (orientation === "horizontal") {
-        return (
-            <hr className={twMerge("border-border my-2 w-full", className)} />
-        );
+        return <hr className={twMerge("border-border w-full", className)} />;
     }
 
     return <hr className={twMerge("border-border", className)} />;
