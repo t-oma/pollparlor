@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Button from "./Button";
 import { X } from "lucide-react";
+import Divider from "./Divider";
 
 type ModalProps = {
     open: boolean;
@@ -106,7 +107,7 @@ export default function Modal({
                 aria-labelledby={title ? "modal-title" : undefined}
                 aria-label={title ? undefined : "Modal"}
                 tabIndex={-1}
-                className="bg-background h-full max-h-[60vh] w-full max-w-[85vw] space-y-4 overflow-auto rounded-lg p-4 shadow"
+                className="bg-background flex h-full max-h-[60vh] w-full max-w-[85vw] flex-col overflow-auto rounded-lg p-4 shadow"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex items-center justify-between gap-2 space-x-2">
@@ -127,7 +128,9 @@ export default function Modal({
                     </Button>
                 </div>
 
-                <div>{children}</div>
+                <Divider className="my-4" />
+
+                {children}
             </div>
         </div>,
         document.body
