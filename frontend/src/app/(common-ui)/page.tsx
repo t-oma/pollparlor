@@ -1,7 +1,7 @@
 import { BookCopy } from "lucide-react";
 import Link from "next/link";
 
-export default function Home() {
+export default function HomePage() {
     return (
         <main className="flex flex-1">
             <section className="relative flex flex-1 flex-col items-center px-8 py-24">
@@ -11,8 +11,6 @@ export default function Home() {
                         Programming languages
                     </h2>
                 </div>
-
-                {/* <Poll /> */}
 
                 <div className="flex flex-1 flex-col items-center justify-center">
                     <Link
