@@ -1,7 +1,6 @@
 import "server-only";
 
 import { Poll } from "@/types/poll";
-import { dateIsoToLocalString } from "@/utils/date";
 
 const API_BASE = process.env.API_BASE_URL!;
 
