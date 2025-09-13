@@ -4,7 +4,6 @@ import { twMerge } from "tailwind-merge";
 
 type BaseProps = {
     className?: string;
-    children: React.ReactNode;
 };
 
 type ButtonAsButton = BaseProps &
