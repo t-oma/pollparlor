@@ -12,9 +12,9 @@ export default async function PollPage({
     if (!poll) return <div>Poll not found</div>;
 
     return (
-        <>
+        <main className="flex flex-1 flex-col">
             <Breadcrumbs />
             <PollDetails poll={poll} />
-        </>
+        </main>
     );
 }
