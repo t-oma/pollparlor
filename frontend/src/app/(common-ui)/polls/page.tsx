@@ -11,7 +11,7 @@ export default async function PollsPage() {
             <Breadcrumbs />
             <section className="flex flex-1 flex-col items-center space-y-4 p-2">
                 <Divider />
-                <h2 className="text-lg font-medium">Available polls</h2>
+                <h1 className="text-lg font-medium">Available polls</h1>
                 <Divider />
 
                 <PollsGrid polls={polls} />
