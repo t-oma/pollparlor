@@ -4,6 +4,8 @@ import { Poll } from "@/types/poll";
 import PollCard from "./PollCard";
 import { useState } from "react";
 import Modal from "../Modal";
+import Button from "../Button";
+import { Heart, Play } from "lucide-react";
 
 export default function PollsGrid({ polls }: { polls: Poll[] }) {
     const [open, setOpen] = useState(false);
@@ -29,16 +31,48 @@ export default function PollsGrid({ polls }: { polls: Poll[] }) {
                 inertRootId="page-root"
             >
                 {selected && (
-                    <div className="space-y-2">
-                        <p className="text-sm">By: {selected.author.email}</p>
-                        <p className="text-xs">
-                            Created:{" "}
-                            {new Date(selected.createdAt).toLocaleString()}
-                        </p>
-                        <p className="text-xs">
-                            Updated:{" "}
-                            {new Date(selected.updatedAt).toLocaleString()}
-                        </p>
+                    <div className="flex flex-1 flex-col justify-between">
+                        <div>
+                            <p className="text-lg">
+                                Author: {selected.author.email}
+                            </p>
+
+                            <div className="py-2">
+                                <Button
+                                    onClick={() => {}}
+                                    className="gap-3 px-4"
+                                    aria-label="Like poll"
+                                >
+                                    <Heart className="h-4 w-4" />
+                                    <span className="">{selected.likes}</span>
+                                </Button>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col space-y-4">
+                            <div className="space-y-2">
+                                <p className="">
+                                    Created:{" "}
+                                    {new Date(
+                                        selected.createdAt
+                                    ).toLocaleString()}
+                                </p>
+                                <p className="">
+                                    Updated:{" "}
+                                    {new Date(
+                                        selected.updatedAt
+                                    ).toLocaleString()}
+                                </p>
+                            </div>
+                            <Button
+                                href={{
+                                    pathname: `/polls/${selected.id}`,
+                                }}
+                            >
+                                <Play className="h-4 w-4" />
+                                <span className="">Participate</span>
+                            </Button>
+                        </div>
                     </div>
                 )}
             </Modal>
