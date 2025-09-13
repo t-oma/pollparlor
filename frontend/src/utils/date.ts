@@ -24,7 +24,7 @@ export function formatRelativeDate(isoString: string): string {
     }
 
     if (diffDays < 7) {
-        return `${diffDays} days ago`;
+        return `${Math.abs(diffDays)} day${diffDays === -1 ? "" : "s"} ago`;
     }
 
     if (diffDays < 30) {
