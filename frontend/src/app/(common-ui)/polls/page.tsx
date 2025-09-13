@@ -1,17 +1,18 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
+import Divider from "@/components/Divider";
 import PollsGrid from "@/components/Poll/PollsGrid";
 import { fetchPolls } from "@/lib/api/polls";
 
-export default async function Polls() {
+export default async function PollsPage() {
     const polls = await fetchPolls();
 
     return (
         <main className="flex flex-1 flex-col">
             <Breadcrumbs />
             <section className="flex flex-1 flex-col items-center space-y-4 p-2">
-                <hr className="border-border w-full" />
+                <Divider />
                 <h2 className="text-lg font-medium">Available polls</h2>
-                <hr className="border-border w-full" />
+                <Divider />
 
                 <PollsGrid polls={polls} />
             </section>
