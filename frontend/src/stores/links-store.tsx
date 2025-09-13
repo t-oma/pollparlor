@@ -1,4 +1,4 @@
-import { BookCopy, House, Settings } from "lucide-react";
+import { BookCopy, House, SquarePen } from "lucide-react";
 import React from "react";
 import { create } from "zustand";
 
@@ -27,9 +27,9 @@ const defaultInitState: LinksState = {
             icon: <BookCopy className="h-4 w-4" />,
         },
         {
-            href: "/settings",
-            label: "Settings",
-            icon: <Settings className="h-4 w-4" />,
+            href: "/polls/create",
+            label: "Create poll",
+            icon: <SquarePen className="h-4 w-4" />,
         },
     ],
 };
