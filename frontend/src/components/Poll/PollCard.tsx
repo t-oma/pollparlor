@@ -3,6 +3,7 @@
 import { Poll } from "@/types/poll";
 import Button from "../Button";
 import { formatRelativeDate } from "@/utils/date";
+import Divider from "../Divider";
 
 export default function PollCard({
     poll,
@@ -25,9 +26,9 @@ export default function PollCard({
                 </h3>
             </div>
 
-            <hr className="border-border my-2 w-full" />
+            <Divider className="my-2" />
             <p className="text-sm">By: {poll.author.email}</p>
-            <hr className="border-border my-2 w-full" />
+            <Divider className="my-2" />
 
             <p className="text-sm">
                 {isUpdated
