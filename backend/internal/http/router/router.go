@@ -5,6 +5,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"pollparlor/internal/http/handler"
+	mw "pollparlor/internal/http/middleware"
 )
 
 // New creates a new router
@@ -12,6 +13,7 @@ func New(h *handler.PollHandler) *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Recovery())
 	r.Use(cors.Default())
+	r.Use(mw.RequestLogger())
 
 	r.GET("/", func(c *gin.Context) { c.JSON(200, gin.H{"message": "Hello, world!"}) })
 
@@ -22,9 +24,9 @@ func New(h *handler.PollHandler) *gin.Engine {
 	// Polls
 	{
 		polls := v1.Group("/polls")
-		polls.GET("", h.List)
-		polls.GET("/:id", h.Get)
-		polls.POST("", h.Create)
+		polls.GET("", h.List)    // all posts
+		polls.GET("/:id", h.Get) // get post by id
+		polls.POST("", h.Create) // create post
 	}
 	return r
 }
