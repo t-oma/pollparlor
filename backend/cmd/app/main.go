@@ -4,7 +4,6 @@ package main
 import (
 	"context"
 	"errors"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -12,21 +11,37 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
+	"pollparlor/internal/config"
 	"pollparlor/internal/domain"
 	"pollparlor/internal/http/handler"
 	"pollparlor/internal/http/router"
+	"pollparlor/internal/logger"
 	pollrepo "pollparlor/internal/repository/poll"
 	pollsvc "pollparlor/internal/service/poll"
 )
 
 func main() {
+	cfg, err := config.Load()
+	if err != nil {
+		panic(err)
+	}
+
+	lg := logger.New(logger.Options{
+		Level:  cfg.Log.Level,
+		Format: cfg.Log.Format,
+		Out:    os.Stdout,
+	})
+
+	log.Logger = lg
+
 	repo := pollrepo.NewMemoryRepo(seedPolls())
 	service := pollsvc.New(repo)
 	h := handler.NewPollHandler(service)
 	r := router.New(h)
 
 	srv := &http.Server{
-		Addr:         ":8080",
+		Addr:         cfg.App.Addr + ":" + cfg.App.Port,
 		Handler:      r,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
@@ -35,7 +50,7 @@ func main() {
 
 	go func() {
 		if err := srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("listen: %v", err)
+			log.Fatal().Err(err).Msg("listen")
 		}
 	}()
 
@@ -47,7 +62,7 @@ func main() {
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {
-		log.Printf("shutdown: %v", err)
+		log.Fatal().Err(err).Msg("shutdown")
 	}
 }
 
