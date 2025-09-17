@@ -1,7 +1,10 @@
 // Package poll provides services for the application
 package poll
 
-import "pollparlor/internal/domain"
+import (
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"pollparlor/internal/domain"
+)
 
 // Service for polls
 type Service struct {
@@ -14,12 +17,12 @@ func New(repo domain.PollRepository) *Service {
 }
 
 // List returns a list of polls
-func (s *Service) List(limit, skip int) ([]domain.Poll, error) {
+func (s *Service) List(limit, skip int64) ([]domain.Poll, error) {
 	return s.repo.List(limit, skip)
 }
 
 // Get returns a poll by ID
-func (s *Service) Get(id string) (*domain.Poll, error) {
+func (s *Service) Get(id bson.ObjectID) (*domain.Poll, error) {
 	return s.repo.GetByID(id)
 }
 
