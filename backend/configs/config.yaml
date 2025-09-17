@@ -5,3 +5,6 @@ app:
 log:
   level: "info" # debug, info, warn, error
   format: "console" # "json" або "console"
+mongo:
+  uri: "mongodb://root:secret@localhost:27017"
+  db: "pollparlor"
