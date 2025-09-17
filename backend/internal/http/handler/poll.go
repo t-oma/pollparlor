@@ -7,21 +7,25 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"pollparlor/internal/domain"
 	"pollparlor/internal/service/poll"
 )
 
+// PollHandler is a handler for polls
 type PollHandler struct {
 	svc *poll.Service
 }
 
+// NewPollHandler creates a new handler for polls
 func NewPollHandler(s *poll.Service) *PollHandler { return &PollHandler{svc: s} }
 
 type listPollURI struct {
-	Limit int `form:"limit" binding:"omitempty,min=1,max=100"`
-	Skip  int `form:"skip" binding:"omitempty,min=0"`
+	Limit int64 `form:"limit" binding:"omitempty,min=1,max=100"`
+	Skip  int64 `form:"skip" binding:"omitempty,min=0"`
 }
 
+// List returns a list of polls
 func (h *PollHandler) List(c *gin.Context) {
 	var query listPollURI
 	if err := c.ShouldBindQuery(&query); err != nil {
@@ -43,9 +47,10 @@ func (h *PollHandler) List(c *gin.Context) {
 }
 
 type getPollURI struct {
-	ID string `uri:"id" binding:"required,uuid"`
+	ID bson.ObjectID `uri:"id" binding:"required,uuid"`
 }
 
+// Get returns a poll by ID
 func (h *PollHandler) Get(c *gin.Context) {
 	var uri getPollURI
 	if err := c.ShouldBindUri(&uri); err != nil {
@@ -66,6 +71,7 @@ type createPollJSON struct {
 	Email string `json:"email" binding:"required,email"`
 }
 
+// Create creates a new poll
 func (h *PollHandler) Create(c *gin.Context) {
 	var body createPollJSON
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -74,7 +80,7 @@ func (h *PollHandler) Create(c *gin.Context) {
 	}
 	now := time.Now()
 	p := domain.Poll{
-		ID:    uuid.NewString(),
+		ID:    bson.NewObjectID(),
 		Title: body.Title,
 		Author: domain.User{
 			UUID:              uuid.NewString(),
