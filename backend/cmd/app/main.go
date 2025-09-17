@@ -12,13 +12,11 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"pollparlor/internal/bootstrap"
 	"pollparlor/internal/config"
 	"pollparlor/internal/domain"
-	"pollparlor/internal/http/handler"
-	"pollparlor/internal/http/router"
 	"pollparlor/internal/logger"
-	pollrepo "pollparlor/internal/repository/poll"
-	pollsvc "pollparlor/internal/service/poll"
 )
 
 func main() {
@@ -32,24 +30,15 @@ func main() {
 		Format: cfg.Log.Format,
 		Out:    os.Stdout,
 	})
-
 	log.Logger = lg
 
-	repo := pollrepo.NewMemoryRepo(seedPolls())
-	service := pollsvc.New(repo)
-	h := handler.NewPollHandler(service)
-	r := router.New(h)
-
-	srv := &http.Server{
-		Addr:         cfg.App.Addr + ":" + cfg.App.Port,
-		Handler:      r,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		IdleTimeout:  60 * time.Second,
+	app, err := bootstrap.New(cfg)
+	if err != nil {
+		log.Fatal().Err(err).Msg("bootstrap")
 	}
 
 	go func() {
-		if err := srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+		if err := app.Server.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 			log.Fatal().Err(err).Msg("listen")
 		}
 	}()
@@ -61,7 +50,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	if err := srv.Shutdown(ctx); err != nil {
+	if err := app.Server.Shutdown(ctx); err != nil {
 		log.Fatal().Err(err).Msg("shutdown")
 	}
 }
@@ -69,7 +58,7 @@ func main() {
 func seedPolls() []domain.Poll {
 	return []domain.Poll{
 		{
-			ID:    uuid.NewString(),
+			ID:    bson.NewObjectID(),
 			Title: "Programming languages",
 			Author: domain.User{
 				UUID:              uuid.NewString(),
@@ -82,7 +71,7 @@ func seedPolls() []domain.Poll {
 			UpdatedAt: time.Now(),
 		},
 		{
-			ID:    uuid.NewString(),
+			ID:    bson.NewObjectID(),
 			Title: "Web frameworks",
 			Author: domain.User{
 				UUID:              uuid.NewString(),
