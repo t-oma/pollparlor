@@ -22,10 +22,17 @@ type Log struct {
 	Format string `mapstructure:"format"`
 }
 
+// Mongo represents the mongoDB configuration
+type Mongo struct {
+	URI string `mapstructure:"uri"`
+	DB  string `mapstructure:"db"`
+}
+
 // Config represents the application configuration
 type Config struct {
-	App App `mapstructure:"app"`
-	Log Log `mapstructure:"log"`
+	App   App   `mapstructure:"app"`
+	Log   Log   `mapstructure:"log"`
+	Mongo Mongo `mapstructure:"mongo"`
 }
 
 // Load loads the configuration from the file
@@ -45,6 +52,8 @@ func Load() (*Config, error) {
 	v.SetDefault("app.port", "8080")
 	v.SetDefault("log.level", "info")
 	v.SetDefault("log.format", "console")
+	v.SetDefault("mongo.uri", "mongodb://localhost:27017")
+	v.SetDefault("mongo.db", "pollparlor")
 
 	if err := v.ReadInConfig(); err != nil {
 		// don't panic if config file not found (e.g. in dev mode)
