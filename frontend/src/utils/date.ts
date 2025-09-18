@@ -8,7 +8,7 @@ export function formatRelativeDate(isoString: string): string {
     const now = new Date();
 
     const diffTime = now.getTime() - date.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffDays = now.getDay() - date.getDay();
     const diffWeeks = Math.floor(diffDays / 7);
     const diffMonths = Math.floor(diffDays / 30);
 
