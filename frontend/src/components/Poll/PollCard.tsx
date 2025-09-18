@@ -4,8 +4,9 @@ import { Poll } from "@/types/poll";
 import Button from "../Button";
 import { formatRelativeDate } from "@/utils/date";
 import Divider from "../Divider";
+import { memo } from "react";
 
-export default function PollCard({
+function PollCard({
     poll,
     onClick,
 }: Readonly<{
@@ -38,3 +39,5 @@ export default function PollCard({
         </Button>
     );
 }
+
+export default memo(PollCard);
