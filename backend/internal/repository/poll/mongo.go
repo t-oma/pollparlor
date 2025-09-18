@@ -3,11 +3,11 @@ package poll
 import (
 	"context"
 	"errors"
+	"math/rand/v2"
 	"time"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
-	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"pollparlor/internal/domain"
 )
 
@@ -30,47 +30,104 @@ func NewMongoRepo(db *mongo.Database, opTimeout time.Duration) *MongoRepo {
 }
 
 // List returns all polls in the repository
-func (r *MongoRepo) List(limit, skip int64) ([]domain.Poll, error) {
+func (r *MongoRepo) List(limit, skip int64) ([]domain.PollWithAuthor, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), r.opTimeout)
 	defer cancel()
 
-	opts := options.Find()
-	if limit != 0 {
-		opts.SetLimit(limit)
+	pipeline := mongo.Pipeline{
+		// {{Key: "$sort", Value: bson.D{{"createdAt", -1}}}},
 	}
-	if skip != 0 {
-		opts.SetSkip(skip)
+	if skip > 0 {
+		pipeline = append(pipeline, bson.D{{Key: "$skip", Value: skip}})
 	}
+	if limit > 0 {
+		pipeline = append(pipeline, bson.D{{Key: "$limit", Value: limit}})
+	}
+	pipeline = append(pipeline,
+		bson.D{{Key: "$lookup", Value: bson.D{
+			{Key: "from", Value: "users"},
+			{Key: "localField", Value: "authorId"},
+			{Key: "foreignField", Value: "uuid"},
+			{Key: "as", Value: "author"},
+		}}},
+		bson.D{{Key: "$unwind", Value: bson.D{
+			{Key: "path", Value: "$author"},
+			{Key: "preserveNullAndEmptyArrays", Value: true},
+		}}},
+		bson.D{{Key: "$project", Value: bson.D{
+			{Key: "_id", Value: 1},
+			{Key: "title", Value: 1},
+			// {Key: "authorId", Value: 1},
+			{Key: "likes", Value: 1},
+			{Key: "createdAt", Value: 1},
+			{Key: "updatedAt", Value: 1},
+			{Key: "author", Value: 1},
+		}}},
+	)
 
-	cur, err := r.pollsCol.Find(ctx, bson.D{}, opts)
-	if errors.Is(err, mongo.ErrNoDocuments) {
-		return []domain.Poll{}, nil
-	}
+	cur, err := r.pollsCol.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
 	defer cur.Close(ctx)
 
-	var out []domain.Poll
+	var out []domain.PollWithAuthor
 	if err := cur.All(ctx, &out); err != nil {
 		return nil, err
 	}
-
 	return out, nil
 }
 
 // GetByID returns a poll by its ID
-func (r *MongoRepo) GetByID(id bson.ObjectID) (*domain.Poll, error) {
+func (r *MongoRepo) GetByID(id bson.ObjectID) (*domain.PollWithAuthor, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), r.opTimeout)
 	defer cancel()
 
-	var p domain.Poll
-	err := r.pollsCol.FindOne(ctx, bson.M{"id": id}).Decode(&p)
+	pipeline := mongo.Pipeline{
+		{{
+			Key: "$match", Value: bson.D{
+				{Key: "_id", Value: id},
+			},
+		}},
+		{{
+			Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: "users"},
+				{Key: "localField", Value: "authorId"},
+				{Key: "foreignField", Value: "uuid"},
+				{Key: "as", Value: "author"},
+			},
+		}},
+		{{
+			Key: "$unwind", Value: bson.D{
+				{Key: "path", Value: "$author"},
+				{Key: "preserveNullAndEmptyArrays", Value: true},
+			},
+		}},
+		{{
+			Key: "$project", Value: bson.D{
+				{Key: "_id", Value: 1},
+				{Key: "title", Value: 1},
+				{Key: "authorId", Value: 1},
+				{Key: "likes", Value: 1},
+				{Key: "createdAt", Value: 1},
+				{Key: "updatedAt", Value: 1},
+				{Key: "author", Value: 1},
+			},
+		}},
+	}
+
+	cur, err := r.pollsCol.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
+	defer cur.Close(ctx)
 
-	return &p, nil
+	var out []domain.PollWithAuthor
+	if err := cur.All(ctx, &out); err != nil {
+		return nil, err
+	}
+
+	return &out[0], nil
 }
 
 // Create adds a poll to the repository
@@ -79,6 +136,15 @@ func (r *MongoRepo) Create(p domain.Poll) error {
 	defer cancel()
 
 	_, err := r.pollsCol.InsertOne(ctx, p)
+	return err
+}
+
+// Delete deletes a poll from the repository
+func (r *MongoRepo) Delete(id bson.ObjectID) error {
+	ctx, cancel := context.WithTimeout(context.Background(), r.opTimeout)
+	defer cancel()
+
+	_, err := r.pollsCol.DeleteOne(ctx, bson.M{"_id": id})
 	return err
 }
 
@@ -119,11 +185,34 @@ func (r *MongoRepo) GetPairs(pollID bson.ObjectID) ([]domain.PollPair, error) {
 
 	var items domain.PollItems
 	err := r.itemsCol.FindOne(ctx, bson.M{"pollId": pollID}).Decode(&items)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return []domain.PollPair{}, nil
+	}
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: shuffle items and return pairs of candidates
+	cands := items.Cands
+	rand.Shuffle(len(cands), func(i, j int) {
+		cands[i], cands[j] = cands[j], cands[i]
+	})
 
-	return nil, nil
+	pairs := make([]domain.PollPair, 0, len(cands)/2)
+	for i := 0; i < len(cands)-1; i += 2 {
+		pairs = append(pairs, domain.PollPair{
+			Left:  cands[i],
+			Right: cands[i+1],
+		})
+	}
+
+	return pairs, nil
+}
+
+// DeleteItems deletes items from the repository
+func (r *MongoRepo) DeleteItems(pollID bson.ObjectID) error {
+	ctx, cancel := context.WithTimeout(context.Background(), r.opTimeout)
+	defer cancel()
+
+	_, err := r.itemsCol.DeleteOne(ctx, bson.M{"pollId": pollID})
+	return err
 }
