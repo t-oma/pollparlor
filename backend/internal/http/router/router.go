@@ -30,9 +30,14 @@ func CreateHealthRoutes(r *gin.RouterGroup) *gin.RouterGroup {
 // CreatePollRoutes creates a new poll routes
 func CreatePollRoutes(r *gin.RouterGroup, h *handler.PollHandler) *gin.RouterGroup {
 	polls := r.Group("/polls")
-	polls.GET("", h.List)    // all polls
-	polls.GET("/:id", h.Get) // get poll by id
-	polls.POST("", h.Create) // create poll
+	polls.GET("", h.List)                        // all polls
+	polls.GET("/:id", h.Get)                     // get poll by id
+	polls.POST("", h.Create)                     // create poll
+	polls.DELETE("/:id", h.Delete)               // delete poll
+	polls.POST("/with-items", h.CreateWithItems) // create poll with items
+	polls.GET("/:id/items", h.GetItems)          // get poll items
+	polls.POST("/:id/items", h.CreateItems)      // create poll items
+	polls.GET("/:id/pairs", h.GetPairs)          // get poll pairs
 
 	return polls
 }
