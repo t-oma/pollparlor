@@ -30,17 +30,30 @@ type PollPair struct {
 type Poll struct {
 	ID        bson.ObjectID `bson:"_id"       json:"id"`
 	Title     string        `bson:"title"     json:"title"`
-	Author    User          `bson:"author"    json:"author"`
+	AuthorID  string        `bson:"authorId"    json:"authorId"`
 	Likes     int           `bson:"likes"     json:"likes"`
 	CreatedAt time.Time     `bson:"createdAt" json:"createdAt"`
 	UpdatedAt time.Time     `bson:"updatedAt" json:"updatedAt"`
 }
 
+// PollWithAuthor is a DTO for polls with author
+type PollWithAuthor struct {
+	ID        bson.ObjectID `bson:"_id"       json:"id"`
+	Title     string        `bson:"title"     json:"title"`
+	AuthorID  string        `bson:"authorId"    json:"authorId"`
+	Likes     int           `bson:"likes"     json:"likes"`
+	CreatedAt time.Time     `bson:"createdAt" json:"createdAt"`
+	UpdatedAt time.Time     `bson:"updatedAt" json:"updatedAt"`
+
+	Author *User `bson:"author" json:"author"`
+}
+
 // PollRepository is a repository for polls
 type PollRepository interface {
-	List(limit, skip int64) ([]Poll, error)
-	GetByID(id bson.ObjectID) (*Poll, error)
+	List(limit, skip int64) ([]PollWithAuthor, error)
+	GetByID(id bson.ObjectID) (*PollWithAuthor, error)
 	Create(p Poll) error
+	Delete(id bson.ObjectID) error
 	GetItems(pollID bson.ObjectID) ([]Candidate, error)
 	CreateItems(pollID bson.ObjectID, items []Candidate) error
 	GetPairs(pollID bson.ObjectID) ([]PollPair, error)
