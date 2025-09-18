@@ -10,12 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
-	"go.mongodb.org/mongo-driver/v2/bson"
 	"pollparlor/internal/bootstrap"
 	"pollparlor/internal/config"
-	"pollparlor/internal/domain"
 	"pollparlor/internal/logger"
 )
 
@@ -52,36 +49,5 @@ func main() {
 
 	if err := app.Server.Shutdown(ctx); err != nil {
 		log.Fatal().Err(err).Msg("shutdown")
-	}
-}
-
-func seedPolls() []domain.Poll {
-	return []domain.Poll{
-		{
-			ID:    bson.NewObjectID(),
-			Title: "Programming languages",
-			Author: domain.User{
-				UUID:              uuid.NewString(),
-				Email:             "user1@example.com",
-				CreatedAt:         time.Now(),
-				PasswordChangedAt: time.Now(),
-			},
-			Likes:     0,
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		},
-		{
-			ID:    bson.NewObjectID(),
-			Title: "Web frameworks",
-			Author: domain.User{
-				UUID:              uuid.NewString(),
-				Email:             "user2@example.com",
-				CreatedAt:         time.Now(),
-				PasswordChangedAt: time.Now(),
-			},
-			Likes:     19,
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now().Add(time.Hour * 2),
-		},
 	}
 }
